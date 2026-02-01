@@ -19,6 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check
 app.get('/health', (req, res) => {
     res.json({
         status: 'ok', 
@@ -27,6 +28,7 @@ app.get('/health', (req, res) => {
     });
 });
 
+// API Routes - PEHLE define karo
 app.get('/api', (req, res) => {
     res.json({msg:'Server is running', env: ENV.NODE_ENV});
 });
@@ -43,19 +45,15 @@ if(ENV.NODE_ENV === "production"){
     console.log('Frontend exists:', existsSync(frontendPath));
     
     if (existsSync(frontendPath)) {
+        // Static files middleware
         app.use(express.static(frontendPath));
 
-        // ✅ Express v5 working wildcard - use regex
-        app.get(/^\/(?!api|books|health).*/, (req, res) => {
+        // ✅ Fallback middleware - sabse last mein
+        app.use((req, res) => {
             res.sendFile(path.join(frontendPath, 'index.html'));
         });
     } else {
         console.error('❌ Frontend dist folder NOT FOUND!');
-        app.get(/^\/.*/, (req, res) => {
-            res.status(503).json({
-                error: 'Frontend not built'
-            });
-        });
     }
 } else {
     app.get('/', (req, res) => {
