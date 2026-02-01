@@ -36,13 +36,13 @@ if(ENV.NODE_ENV === "production"){
 
     app.use(express.static(frontendPath));
 
-    app.get('*any', (req, res) => {
+    app.get('/{*any}', (req, res) => {
         res.sendFile(path.join(frontendPath, 'index.html'));
     });
 }
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });
