@@ -36,9 +36,12 @@ if(ENV.NODE_ENV === "production"){
 
     app.use(express.static(frontendPath));
 
-    app.get('/{*any}', (req, res) => {
-        res.sendFile(path.join(frontendPath, 'index.html'));
-    });
+    // app.get('*', (req, res) => {
+    //     res.sendFile(path.join(frontendPath, 'index.html'));
+    // });
+     app.use((req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
 }
 
 // Start server
