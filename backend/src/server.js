@@ -1,51 +1,71 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import path from 'path'
-import {ENV} from './lib/env.js'
 import { fileURLToPath } from 'url';
+import { existsSync } from 'fs';
 
 dotenv.config();
 
-// ES Module __dirname fix
+const ENV = {
+    NODE_ENV: process.env.NODE_ENV || 'development',
+    PORT: process.env.PORT || 5000
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Middleware
-// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'ok', 
+        timestamp: new Date(),
+        env: ENV.NODE_ENV
+    });
+});
+
 app.get('/api', (req, res) => {
-    res.json({msg:'Server is running on 3000'});
+    res.json({msg:'Server is running', env: ENV.NODE_ENV});
 });
 
 app.get('/books',(req, res)=>{
-      res.json({msg:'this is the book endpoint'});
-})
+    res.json({msg:'this is the book endpoint'});
+});
 
-// make out app ready for deployment
+// Production deployment
 if(ENV.NODE_ENV === "production"){
-    const rootDir = path.resolve(__dirname, '../../');
+    const frontendPath = path.resolve(__dirname, '../../frontend/dist');
+    
+    console.log('Serving frontend from:', frontendPath);
+    console.log('Frontend exists:', existsSync(frontendPath));
+    
+    if (existsSync(frontendPath)) {
+        app.use(express.static(frontendPath));
 
-  const frontendPath = path.join(rootDir, 'frontend/dist');
-
-   console.log('Serving frontend from:', frontendPath);
-
-    app.use(express.static(frontendPath));
-
-    // app.get('*', (req, res) => {
-    //     res.sendFile(path.join(frontendPath, 'index.html'));
-    // });
-     app.use((req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
-  });
+        // ✅ Express v5 working wildcard - use regex
+        app.get(/^\/(?!api|books|health).*/, (req, res) => {
+            res.sendFile(path.join(frontendPath, 'index.html'));
+        });
+    } else {
+        console.error('❌ Frontend dist folder NOT FOUND!');
+        app.get(/^\/.*/, (req, res) => {
+            res.status(503).json({
+                error: 'Frontend not built'
+            });
+        });
+    }
+} else {
+    app.get('/', (req, res) => {
+        res.json({msg: 'Development mode'});
+    });
 }
 
-// Start server
-const PORT = process.env.PORT || 5000;
+const PORT = ENV.PORT;
+
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`Environment: ${ENV.NODE_ENV}`);
 });
