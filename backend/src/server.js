@@ -13,39 +13,42 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middleware
-// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// ✅ Health check
+app.get('/health', (req, res) => {
+    res.json({status: 'ok', timestamp: new Date()});
+});
+
+// API Routes - PEHLE define karo
 app.get('/api', (req, res) => {
-    res.json({msg:'Server is running on 3000'});
+    res.json({msg:'Server is running', env: ENV.NODE_ENV});
 });
 
 app.get('/books',(req, res)=>{
-      res.json({msg:'this is the book endpoint'});
-})
+    res.json({msg:'this is the book endpoint'});
+});
 
-// make out app ready for deployment
+// Production deployment
 if(ENV.NODE_ENV === "production"){
-    const rootDir = path.resolve(__dirname, '../../');
+    const frontendPath = path.resolve(__dirname, '../../frontend/dist');
+    
+    console.log('Serving frontend from:', frontendPath);
 
-  const frontendPath = path.join(rootDir, 'frontend/dist');
-
-   console.log('Serving frontend from:', frontendPath);
-
+    // Static files middleware
     app.use(express.static(frontendPath));
 
-    // app.get('*', (req, res) => {
-    //     res.sendFile(path.join(frontendPath, 'index.html'));
-    // });
-     app.use((req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
-  });
+    // ✅ Express v5 wildcard syntax - do NOT use parentheses
+    app.get('/*', (req, res) => {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    });
 }
 
 // Start server
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`Environment: ${ENV.NODE_ENV}`);
 });
