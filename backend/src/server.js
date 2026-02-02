@@ -1,32 +1,27 @@
 import express from 'express'
-import dotenv from 'dotenv'
 import path from 'path'
+import {ENV} from './lib/env.js'
 import { fileURLToPath } from 'url';
-import { existsSync } from 'fs';
+import connectDB from './lib/db.js'
 
-dotenv.config();
+connectDB()
 
-const ENV = {
-    NODE_ENV: process.env.NODE_ENV || 'development',
-    PORT: process.env.PORT || 5000
-};
-
+// ES Module __dirname fix
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ✅ Health check
 app.get('/health', (req, res) => {
-    res.json({
-        status: 'ok', 
-        timestamp: new Date(),
-        env: ENV.NODE_ENV
-    });
+    res.json({status: 'ok', timestamp: new Date()});
 });
 
+// API Routes - PEHLE define karo
 app.get('/api', (req, res) => {
     res.json({msg:'Server is running', env: ENV.NODE_ENV});
 });
@@ -40,30 +35,18 @@ if(ENV.NODE_ENV === "production"){
     const frontendPath = path.resolve(__dirname, '../../frontend/dist');
     
     console.log('Serving frontend from:', frontendPath);
-    console.log('Frontend exists:', existsSync(frontendPath));
-    
-    if (existsSync(frontendPath)) {
-        app.use(express.static(frontendPath));
 
-        // ✅ Express v5 working wildcard - use regex
-        app.get(/^\/(?!api|books|health).*/, (req, res) => {
-            res.sendFile(path.join(frontendPath, 'index.html'));
-        });
-    } else {
-        console.error('❌ Frontend dist folder NOT FOUND!');
-        app.get(/^\/.*/, (req, res) => {
-            res.status(503).json({
-                error: 'Frontend not built'
-            });
-        });
-    }
-} else {
+    // Static files middleware
+    app.use(express.static(frontendPath));
+
+    // ✅ Express v5 wildcard syntax - do NOT use parentheses
     app.get('/', (req, res) => {
-        res.json({msg: 'Development mode'});
+        res.sendFile(path.join(frontendPath, 'index.html'));
     });
 }
 
-const PORT = ENV.PORT;
+// Start server
+const PORT = ENV.PORT || 5000;
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server running on port ${PORT}`);
