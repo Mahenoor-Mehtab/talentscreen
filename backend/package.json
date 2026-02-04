@@ -17,7 +17,8 @@
     "express": "^5.2.1",
     "inngest": "^3.50.0",
     "interview-platform": "file:..",
-    "mongoose": "^9.1.5"
+    "mongoose": "^9.1.5",
+    "stream-chat": "^9.31.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
