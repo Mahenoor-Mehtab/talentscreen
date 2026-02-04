@@ -3,8 +3,10 @@ import path from 'path'
 import {ENV} from './lib/env.js'
 import { fileURLToPath } from 'url';
 import connectDB from './lib/db.js'
+import cors from 'cors'
+import { serve } from "inngest/express";
+import { inngest, functions } from "./lib/inngest.js"
 
-connectDB()
 
 // ES Module __dirname fix
 const __filename = fileURLToPath(import.meta.url);
@@ -15,20 +17,19 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: ENV.CLIENT_URL, // allowed domains
+    methods: ["GET", "POST", "PUT", "DELETE"], // allowed HTTP methods
+    credentials: true // cookies / auth headers allow
+  })
+);
 
-// ✅ Health check
-app.get('/health', (req, res) => {
-    res.json({status: 'ok', timestamp: new Date()});
-});
 
-// API Routes - PEHLE define karo
-app.get('/api', (req, res) => {
-    res.json({msg:'Server is running', env: ENV.NODE_ENV});
-});
+// API Routes - inngest 
+app.use("/api/inngest", serve({ client: inngest, functions }));
 
-app.get('/books',(req, res)=>{
-    res.json({msg:'this is the book endpoint'});
-});
+
 
 // Production deployment
 if(ENV.NODE_ENV === "production"){
@@ -45,10 +46,20 @@ if(ENV.NODE_ENV === "production"){
     });
 }
 
-// Start server
+// Start server only after DB connection is established
 const PORT = ENV.PORT || 5000;
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server running on port ${PORT}`);
-    console.log(`Environment: ${ENV.NODE_ENV}`);
-});
+const startServer = async () => {
+    try {
+        await connectDB();
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`✅ Server running on port ${PORT}`);
+            console.log(`Environment: ${ENV.NODE_ENV}`);
+        });
+    } catch (error) {
+        console.error('Failed to start server due to DB connection error:', error);
+        process.exit(1);
+    }
+};
+
+startServer();
