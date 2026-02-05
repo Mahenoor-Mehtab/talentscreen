@@ -6,6 +6,8 @@ import connectDB from './lib/db.js'
 import cors from 'cors'
 import { serve } from "inngest/express";
 import { inngest, functions } from "./lib/inngest.js"
+import { clerkMiddleware } from '@clerk/express'
+import chatRoutes from './routes/chatRoutes.js';
 
 
 // ES Module __dirname fix
@@ -16,6 +18,8 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+
+// creadentials:true meaning?? => server allows a browzer to include cookies on request
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
@@ -25,9 +29,12 @@ app.use(
   })
 );
 
+app.use(clerkMiddleware()) // this adds auth feild to request object: req.auth()
+
 
 // API Routes - inngest 
 app.use("/api/inngest", serve({ client: inngest, functions }));
+app.use("/api/chat", chatRoutes)
 
 
 
