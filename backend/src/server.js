@@ -8,6 +8,7 @@ import { serve } from "inngest/express";
 import { inngest, functions } from "./lib/inngest.js"
 import { clerkMiddleware } from '@clerk/express'
 import chatRoutes from './routes/chatRoutes.js';
+import sessionRouter from './routes/sessionRoutes.js';
 
 
 // ES Module __dirname fix
@@ -35,6 +36,7 @@ app.use(clerkMiddleware()) // this adds auth feild to request object: req.auth()
 // API Routes - inngest 
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes)
+app.use("/api/session", sessionRouter)
 
 
 
