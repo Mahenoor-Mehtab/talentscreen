@@ -51,8 +51,13 @@ export async function executeCode(language , code){
 
         const data = await response.json();
 
-        const output = data.run.output || ""
-        const stderr = data.run.stderr || ""
+   if (!data.run) {  
+           const compileErr = data.compile?.stderr || data.compile?.output || "Unknown error";  
+            return { success: false, error: compileErr };  
+        }  
+  
+        const output = data.run.output || "";  
+        const stderr = data.run.stderr || "";  
 
         if(stderr){
             return{
@@ -70,7 +75,7 @@ export async function executeCode(language , code){
     }catch(error){
         return{
             success: false,
-            error: `False to execute code: ${error.message}`
+            error: `Failed to execute code: ${error.message}`
         }
 
     }
