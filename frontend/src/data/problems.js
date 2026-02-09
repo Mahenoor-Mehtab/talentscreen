@@ -500,7 +500,7 @@ export const PROBLEMS = {
 export const LANGUAGE_CONFIG = {
     javascript: {
         name: "JavaScript",
-        icon: "/javascript.png",
+        icon: "/js.png",
         monacoLang: "javascript",
     },
     python: {

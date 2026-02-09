@@ -70,7 +70,7 @@ const ProblemsPage = () => {
         <div className='grid gap-4'>
           {problems.map((problem) => (
             <Link 
-              to={`/problems/${problem.id}`} 
+              to={`/problem/${problem.id}`} 
               key={problem.id}
               className='group block'
             >
