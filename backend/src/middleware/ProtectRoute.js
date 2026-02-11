@@ -3,7 +3,7 @@ import User from '../models/User.js'
 
 export const protectRoute = [
     // if user not login then requireAuth internally redirect you to sign-in page
-    requireAuth({signInUrl :"/sign-in"}),
+    requireAuth(),
     async(req , res , next)=>{
         try{
             const clerkId= req.auth.userId;

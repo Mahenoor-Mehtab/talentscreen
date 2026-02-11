@@ -36,7 +36,7 @@ app.use(clerkMiddleware()) // this adds auth feild to request object: req.auth()
 // API Routes - inngest 
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/chat", chatRoutes)
-app.use("/api/session", sessionRouter)
+app.use("/api/sessions", sessionRouter)
 
 
 
