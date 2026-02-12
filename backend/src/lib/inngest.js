@@ -8,7 +8,7 @@ export const inngest = new Inngest({ id: "talent-screen" }); // created inngest 
 //! in this we take the user from clerk and save in the mongo db
 const syncUser = inngest.createFunction(
     {id: "sync-user"},
-    {event:"user.created"},
+    {event:"clerk/user.created"},
     async ({event}) =>{
         await connectDB()
 
@@ -44,7 +44,7 @@ const syncUser = inngest.createFunction(
 //! deleting the user from database
 const deleteUserFromDB = inngest.createFunction(
     {id: "delete-User-From-DB"},
-    {event:"user.deleted"},
+    {event:"clerk/user.deleted"},
     async ({event}) =>{
         await connectDB()
 
