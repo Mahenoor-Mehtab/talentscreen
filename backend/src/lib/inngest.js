@@ -8,7 +8,7 @@ export const inngest = new Inngest({ id: "talent-screen" }); // created inngest 
 //! in this we take the user from clerk and save in the mongo db
 const syncUser = inngest.createFunction(
     {id: "sync-user"},
-    {event: "user.created"},
+    {event:"clerk/user.created"},
     async ({event}) => {
         console.log("📦 Event data:", event.data);
         
