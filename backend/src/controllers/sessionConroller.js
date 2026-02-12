@@ -12,7 +12,7 @@ export async function createSession(req , res){
         }
 
         // generate a unique id for stream video
-        const callId = `session_${Data.now()}_${Math.random().toString(36).substring(7)}`;
+        const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
         // create session in db
         const session = await Session.create({problem , difficulty , host:userId , callId});
@@ -103,7 +103,7 @@ export async function joinSession(req , res){
      try{
         const {id} = req.params;
         const userId = req.user._id;
-        const clerkId = req.user.clerkId;
+        const clerkId = req.user.clerkUserId;
 
         const session = await Session.findById(id);
 
@@ -129,7 +129,7 @@ export async function joinSession(req , res){
         res.status(200).json({session});
 
     }catch(error){
-        console.log("Error in join Session controller:", error.session);
+        console.log("Error in join Session controller:", error.message);
         res.status(500).json({message:"Internal Server Error"})
         
     }
