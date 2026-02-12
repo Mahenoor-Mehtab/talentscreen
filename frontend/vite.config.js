@@ -6,12 +6,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   
   server: {
-    proxy: {
+    proxy: import.meta.env.MODE === 'development' ? {
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
         secure: false
       }
-    }
+    } : {}
   }
 })
