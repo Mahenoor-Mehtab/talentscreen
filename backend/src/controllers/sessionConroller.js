@@ -47,8 +47,8 @@ export async function createSession(req , res){
 
 
 export async function getActiveSessions(_, res){
-     try{
-        const sessions = await Session.find({status:"active"}).populate("host", "name profileImage email clerkUserId").sort({createdAt:-1}).limit(20)
+    try{
+        const sessions = await Session.find({status:"active"}).populate("host", "name profileImage email clerkUserId").populate("participant", "name profileImage email clerkUserId").sort({createdAt:-1}).limit(20)
         res.status(200).json({sessions})
 
     }catch(error){
@@ -132,7 +132,7 @@ export async function joinSession(req , res){
         console.log("Error in join Session controller:", error.message);
         res.status(500).json({message:"Internal Server Error"})
         
-    }
+}
 }
 
 export async function endSession(req , res){
