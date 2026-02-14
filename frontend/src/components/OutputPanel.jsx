@@ -1,4 +1,24 @@
-function OutputPanel({ output }) {
+import { TerminalIcon } from "lucide-react";
+
+function OutputPanel({ output , isRunning}) {
+  if (isRunning) {
+    return (
+      <div className='h-full flex flex-col items-center justify-center text-primary animate-pulse bg-[#0d0d0d]'>
+        <TerminalIcon className='size-8 mb-2' />
+        <p className='text-xs font-mono tracking-tighter'>Executing code on server...</p>
+      </div>
+    );
+  }
+  // 2. Initial/Empty State
+  if (!output) {
+    return (
+      <div className='h-full flex flex-col items-center justify-center text-base-content/20 bg-[#0d0d0d]'>
+        <TerminalIcon className='size-12 mb-4 opacity-10' />
+        <p className='text-[10px] uppercase font-black tracking-[0.2em]'>No Output Detected</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full bg-base-100 flex flex-col">
       <div className="px-4 py-2 bg-base-200 border-b border-base-300 font-semibold text-sm">

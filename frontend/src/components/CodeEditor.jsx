@@ -8,7 +8,7 @@ const CodeEditor = ({ selectedLanguage, code, isRunning, onLanguageChange, onCod
   const currentLang = LANGUAGE_CONFIG[selectedLanguage] || LANGUAGE_CONFIG['javascript'];
 
   return (
-    <div className='h-full flex flex-col bg-[#1e1e1e] rounded-2xl overflow-hidden border border-white/5 shadow-2xl'>
+    <div className='h-full flex flex-col bg-[#1e1e1e] rounded-2xl overflow-scroll border border-white/5 shadow-2xl'>
       
       {/* 1. HEADER SECTION (LeetCode Style) */}
       <div className='flex items-center justify-between px-3 py-1.5 bg-[#181818] border-b border-white/5 shrink-0'>

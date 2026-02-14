@@ -22,7 +22,9 @@ export const sessionApi = {
     },
 
     joinSession: async (id) =>{
+        console.log("before join ", id)
         const response = await axiosInstance.post(`/sessions/${id}/join`);
+        console.log("join muskan", response)
         return response.data;
     },
 
@@ -31,10 +33,15 @@ export const sessionApi = {
         return response.data;
     },
 
-    getStreamToken: async ()=>{
-        const response = await axiosInstance.get(`/chat/token`);
-        return response.data;
+    getStreamToken: async () => {
+    try {
+      const response = await axiosInstance.get(`/chat/token`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to get stream token:", error.message);
+      throw error;
     }
+  }
 
 
 }

@@ -103,7 +103,7 @@ return (
                     <span className="text-[10px] font-bold text-white/20 tracking-[0.2em] uppercase">Queue</span>
                   </div>
                   
-                  <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                  <div className="flex-1 overflow-hidden p-4 custom-scrollbar">
                     <ActiveSession
                       sessions={activeSessions}
                       isLoading={loadingActiveSession}
